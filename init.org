@@ -22,7 +22,7 @@ Thanks
 :PROPERTIES:
 :COOKIE_DATA: todo recursive
 :END:
-** TODO v1 [13/15] [86%]
+** TODO v1 [13/16] [81%]
 :PROPERTIES:
 :COOKIE_DATA: todo recursive
 :END:
@@ -30,6 +30,8 @@ Thanks
 *** WIP keybinding
 - [ ] migrate global-set-key to :map
 - [ ] migrate from :map to :general (+ which key)
+*** WIP strange warning when Ctrl-X Ctrl-V
+> Buffer  **lose** modified; kill anyway? (yes, no, save and then kill, ?):
 *** DONE LSP
 *** DONE claude-el
 *** DONE treesitter (another attempt)
@@ -43,7 +45,7 @@ Thanks
 *** DONE [fly/spell/*]check
 *** DONE magit
 *** DONE org
-* how to use 
+* how to use
 
 #+begin_example console
 $ emacs -q -l ~/repo/perso/nemaks/emacs-init.el --init-directory=~/repo/perso/nemaks
@@ -68,7 +70,7 @@ To use, please set the following into the earliest emacs loading file (`~/.emacs
 $ # Start the emacs daemon serivce for the user.
 $ systemctl --user enable ./emacs.service
 $ # Then access an instance.
-$ emacsclient -nc 
+$ emacsclient -nc
 #+end_example
 
 ** chemacs2
@@ -124,7 +126,7 @@ Quick helper
 #+END_EXAMPLE
 
 
-*** flycheck-golangci-lint patch 
+*** flycheck-golangci-lint patch
 
 #+begin_src diff
 # emacs.d/elap/30.2/flycheck-golangci-lint-20251203/flycheck-golangci-lint.el
@@ -317,19 +319,23 @@ Silence ring bell.
 Lets tune the UI to something more minimal.
 
 #+BEGIN_SRC emacs-lisp
-;; enable smooth scrolling
+;; Enable smooth scrolling.
 (pixel-scroll-precision-mode 1)
-;; disables menubar
+;; Disables menubar.
 (menu-bar-mode -1)
-;; disables toolbar
+;; Disable the context menu (middle click).
+(context-menu-mode -1)
+;; En keep middle click as past.
+(global-set-key (kbd "<mouse-2>") 'mouse-yank-primary)
+;; Disables toolbar.
 (tool-bar-mode -1)
-;; disables scrollbar
+;; Disables scrollbar.
 (scroll-bar-mode -1)
-;; Disable tooltips
+;; Disable tooltips.
 (tooltip-mode -1)
-;; Give some breathing room
+;; Give some breathing room.
 (set-fringe-mode 10)
-;; Set up the visible bell
+
 
 
 (setq
@@ -639,7 +645,7 @@ See the [[https://github.com/noctuid/general.el][repo]] for more info.
     "h" '(:ignore t :wk "Help"))
 
   ;; lsp
-  (nemaks/leader-keys 
+  (nemaks/leader-keys
     :major-modes '(lsp-mode)
     :keymap '(lsp-mode-map)
     "l" '(:ignore t :wk "LSP"))
@@ -660,7 +666,7 @@ See the [[https://github.com/noctuid/general.el][repo]] for more info.
     :major-modes '(go-mode)
     :keymap '(go-mode-map)
     "m" '(:ignore t :wk "Go mode"))
-  
+
   ;; While python is the major mode
   (nemaks/leader-keys ;; python-mode
     :major-modes '(python-mode)
@@ -679,7 +685,7 @@ See the [[https://github.com/noctuid/general.el][repo]] for more info.
   (nemaks/leader-keys
     "t" '(:ignore t :wk "Toggle")
     "t e" '(flycheck-list-errors :wk "Toggle errors list")
-    
+
     "t l" '(:ignore t :wk "Toggle line stuffs")
     "t ll" '(display-fill-column-indicator-mode :wk "Toggle long lines visual limit")
     "t lh" '(column-enforce-mode :wk "Toggle highligth long lines")
@@ -721,6 +727,10 @@ And a few keybindings that doesn't belong to any groups
  ;; ctrl+pgup / ctrl+pgdn to change next/prev tab
  "<C-next>" '(tab-bar-switch-to-next-tab :wk "Next tab")
  "<C-prior>" '(tab-bar-switch-to-prev-tab :wk "Previous tab")
+
+ "C-{" '(next-window-any-frame :wk "Next window")
+ "C-}" '(previous-window-any-frame :wk "Previous window")
+
  )
 
 #+end_src
@@ -837,7 +847,8 @@ Which key for helpful emacs
   (setq create-lockfiles nil) ;; no need to create lockfiles
   (setq enable-recursive-minibuffers t)
   (setq sentence-end-double-space nil)
-  (defalias 'yes-or-no-p 'y-or-n-p) ;; life is too shor
+  ;; (defalias 'yes-or-no-p 'y-or-n-p) ;; life is too shor --> buggy Buffer  **lose** modified; kill anyway? ...
+  (setopt use-short-answers t)
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit) ;; escape quits everything
 
   ;; less noise when compiling elisp
@@ -845,7 +856,7 @@ Which key for helpful emacs
   (setq load-prefer-newer t)
 
   ;; Hide commands in M-x which don't work in the current mode
-  (setq read-extended-command-predicate 
+  (setq read-extended-command-predicate
         #'command-completion-default-include-p)
 )
 #+end_src
@@ -1087,18 +1098,23 @@ We're asking emacs to render symbol w/ apple ttf emoji.
   ;; :defer 2
   :init
   (setq
+   doom-modeline-icon t
    doom-modeline-minor-modes nil
    doom-modeline-buffer-encoding nil
    doom-modeline-major-mode-color-icon t
    doom-modeline-buffer-state-icon t
    doom-modeline-buffer-modification-icon t
+   doom-modeline-buffer-file-name-style 'auto
    doom-modeline-lsp-icon t
    ;; Set VCS info max length
    doom-modeline-vcs-max-length 12
    ;; Enable word count
    doom-modeline-enable-word-count t
    ;; Disable time
-   doom-modeline-time-icon nil
+   doom-modeline-time-icon t
+   doom-modeline-time-live-icon t
+   doom-modeline-time-analogue-clock t
+   doom-modeline-time-clock-size 0.7
    ;; Show position %
    doom-modeline-percent-position t)
   (doom-modeline-mode 1)
@@ -1351,7 +1367,7 @@ Nice welcome screen. See the official
   (setq dashboard-set-heading-icons t)
   (setq dashboard-set-file-icons t)
   (setq dashboard-set-navigator t)
-  
+
   ;; close agenda buffers
   (setq dashboard-agenda-release-buffers t)
   ;; Disaply package & loadtime metrics.
@@ -1359,7 +1375,7 @@ Nice welcome screen. See the official
 
   (setq dashboard-icon-type 'all-the-icons) ;; use `all-the-icons' package
   (setq dashboard-display-icons-p t) ;; use `all-the-icons' package
-  
+
   (setq dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
 
   ;; IDEA: random cover in a dir
@@ -1381,6 +1397,10 @@ Nice welcome screen. See the official
 
   :when (not command-line-args-left)
   :config
+
+  ;; Set dashboard as initial buffer.
+  (setq initial-buffer-choice 'dashboard-refresh-buffer)
+
   (dashboard-setup-startup-hook)
   (dashboard-modify-heading-icons '((recents . "file-text")))
 
@@ -1391,7 +1411,7 @@ Nice welcome screen. See the official
     (interactive)
     (tab-new)
     (dashboard-refresh-buffer))
-  
+
   ;; Remplacer le binding de création d'onglet
   (general-define-key
    "C-x t N" '(nemaks/new-tab-with-dashboard
@@ -1460,8 +1480,9 @@ Native tab ? Or smth better ?
                     tab-bar-format-add-tab))
   :general
   (general-define-key
-   ;; TODO: move to M-m t ? 
+   ;; TODO: move to M-m t ?
     "C-x t b" '(tab-bar-history-back :wk "Backward history tab")
+    "C-x t c" '(tab-bar-close-tab :wk "Close tab")
     "C-x t d" '(tab-bar-close-tab :wk "Close tab")
     "C-x t f" '(tab-bar-history-forward :wk "Forward history tab")
     "C-x t g" '(nemaks/tab-switch-to-group :wk "Switch to tab group")
@@ -1548,7 +1569,7 @@ Uses position instead of index field."
 
 #+end_src
 
-**** whitespace handling 
+**** whitespace handling
 
 We could enforce the cleanup of them on save - but it's messy with team's git.
 Although, now gitlab offer the option to "hide whitespace changes" in merge request views.
@@ -1652,15 +1673,15 @@ See the [[https://github.com/abo-abo/swiper#ivy][repo (swiper#ivy)]].
    ("<left>" . ivy-backward-delete-char))
   :config
   (setq ivy-use-virtual-buffers t
-        ivy-count-format "%d/%d ")
+        ivy-count-format "%d/%d "
+        ivy-truncate-lines nil)
   ;; (global-set-key (kbd "C-x b") 'ivy-switch-buffer)
-  (ivy-mode 1)
-  )
+  (ivy-mode 1))
 
 (setq ivy-use-selectable-prompt t)
 #+end_src
 
-**** ivy-prescient 
+**** ivy-prescient
 
 #+begin_src emacs-lisp
 ;; prescient.el is a library which sorts and filters lists of candidates
@@ -1778,7 +1799,7 @@ See [[https://github.com/nonsequitur/smex][the official repo]] for more.
 I prefer emacs to just ask y/n not yes/no
 
 #+begin_src emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
+;; (fset 'yes-or-no-p 'y-or-n-p) --> buggy, Buffer  **lose** modified; kill anyway? (yes, no, save and then kill, ?):
 (setopt use-short-answers t)
 #+end_src
 
@@ -1852,7 +1873,7 @@ When a file changes on disk, automatically reload its buffer silently
 ;; value greater than 100 gets rid of half page jumping
 (setq scroll-conservatively 101)
 ;; how many lines at a time
-(setq mouse-wheel-scroll-amount '(3 ((shift) . 3)))
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 ;; accelerate scrolling
 (setq mouse-wheel-progressive-speed t)
 ;; scroll window under mouse
@@ -2035,12 +2056,31 @@ Visual Studio like - see [[https://github.com/sebastiencs/omnibox][here]] for mo
 ;; (global-set-key (kbd "M-x") 'omnibox-counsel-M-x)
 #+END_SRC
 
+***** vundo
+
+Let's use [[https://github.com/casouri/vundo][vundo]] instead. A visualizer to the natif undo system
+
+#+begin_src emacs-lisp
+(use-package vundo
+  :disabled t
+  :ensure t
+  :config
+  ;; Nice unicode symboles unicode for tree mode.
+  (setq vundo-glyph-alist vundo-unicode-symbols)
+  :general
+  (nemaks/leader-keys
+    "u" '(vundo :wk "Visual Undo")))
+#+end_src
+
 ***** undo-tree
 A better undo system. See the [[https://elpa.gnu.org/packages/undo-tree.html][official doc]] for more.
+
+Obsolete ! We should migrate to vundo.
 
 #+BEGIN_SRC emacs-lisp
 ;; install a better undo system
 (use-package undo-tree
+  ;; :disabled t
   :ensure t
   :diminish
   :config
@@ -2077,6 +2117,7 @@ Highlight in-code TODOs
           ("HACK"  font-lock-constant-face bold)
           ("IDEA"  font-lock-keyword-face bold)
           ("LINK"  success bold)
+          ("TLDR"  success bold)
           ("NOTE"  success bold))))
 #+end_src
 
@@ -2093,6 +2134,7 @@ Suggests to bind some keys to hl-todo-next in order to jump from tag to tag, but
       (?h . "HACK")
       (?i . "IDEA")
       (?l . "LINK")
+      (?l . "TLDR")
       (?n . "NOTE")))
   :general
   (nemaks/leader-keys
@@ -2351,7 +2393,7 @@ Let's provide org
   ;; (org-mode . variable-pitch-mode)
   (org-mode . visual-line-mode)
   ;; Disable electric indentation.
-  (org-mode . (lambda () (electric-indent-local-mode -1))) 
+  (org-mode . (lambda () (electric-indent-local-mode -1)))
 
   :general
   (nemaks/leader-keys org-mode-map
@@ -2587,20 +2629,20 @@ Useful when inserting code block into org files
         (message "⚠ Failed to install: %s" failed-langs)
       (message "✓ All grammars installed successfully!"))))
 
-;; Active tree-sitter only for certains modes
-(add-to-list 'major-mode-remap-alist '(bash-mode . bash-ts-mode))
-(add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
-(add-to-list 'major-mode-remap-alist '(cpp-mode . cpp-ts-mode))
-(add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
-(add-to-list 'major-mode-remap-alist '(html-mode . html-ts-mode))
-(add-to-list 'major-mode-remap-alist '(javascript-mode . javascript-ts-mode))
-(add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode))
-(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-(add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
-(add-to-list 'major-mode-remap-alist '(toml-mode . toml-ts-mode))
-(add-to-list 'major-mode-remap-alist '(tsx-mode . tsx-ts-mode))
-(add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
-(add-to-list 'major-mode-remap-alist '(yaml-mode . yaml-ts-mode))
+;; ;; Active tree-sitter only for certains modes
+;; (add-to-list 'major-mode-remap-alist '(bash-mode . bash-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(cpp-mode . cpp-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(html-mode . html-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(javascript-mode . javascript-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(toml-mode . toml-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(tsx-mode . tsx-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
+;; (add-to-list 'major-mode-remap-alist '(yaml-mode . yaml-ts-mode))
 
 (use-package treesit-auto
   :disabled t ;; to many issue w/ go & docker (ABI 14)
@@ -2610,9 +2652,9 @@ Useful when inserting code block into org files
   (treesit-auto-install 'prompt)
   :config
   ;; Used languages.
-  ;; (setq treesit-auto-langs 
+  ;; (setq treesit-auto-langs
   ;;       '(bash c cpp css go html javascript json python rust sql toml tsx typescript yaml))
-  
+
   ;; Enable tree-sitter modes.
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
@@ -2631,23 +2673,23 @@ Let's setup the famous `lsp-mode`
   :ensure (:wait t)
   :commands (lsp lsp-deferred)
   :custom
-  (lsp-idle-delay 0.5)  
-  ;; (lsp-log-io nil)      
+  (lsp-idle-delay 0.5)
+  ;; (lsp-log-io nil)
   (read-process-output-max (* 1024 1024)) ;; 1MB
 
   ; Features
   ;; Disable yasnippet
-  (lsp-enable-snippet nil)  
+  (lsp-enable-snippet nil)
   ;; Disable file watcher.
   (lsp-enable-file-watchers nil)
   (lsp-keep-workspace-alive nil)
   (lsp-completion-provider :capf)
-  
+
 
   ;; Diagnostics flycheck.
   (lsp-diagnostics-provider :flycheck)
-  
-  (lsp-disabled-clients '(semgrep-ls))  
+
+  (lsp-disabled-clients '(semgrep-ls))
 
   ;; UI
   (lsp-headerline-breadcrumb-enable t)
@@ -2716,6 +2758,24 @@ Seems to make the screen cluttered, needs a few tweaks.
     ;; Enable inline documentation
     (setq lsp-ui-sideline-enable t)
     (setq lsp-ui-doc-position 'bottom))
+
+
+  ;; Hover doc (popup au survol)
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-position 'at-point  ;; ou 'top / 'bottom
+        lsp-ui-doc-delay 0.5
+        lsp-ui-doc-show-with-cursor t
+        lsp-ui-doc-show-with-mouse t)
+  ;; Sideline (infos inline à droite)
+  (setq lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-hover t
+        lsp-ui-sideline-show-diagnostics t
+        lsp-ui-sideline-show-code-actions t)
+
+
+  ;; Peek (preview définitions/références)
+  (setq lsp-ui-peek-enable t)
+
   (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
   :general
   (nemaks/leader-keys
@@ -2886,15 +2946,15 @@ $ go -u install \
   ;; Build tags par défaut (peut être overridé via .dir-locals.el)
   (defvar nemaks/go-build-tags "integration,e2e,nowatcher"
     "Default Go build tags.")
-  
+
   (defun nemaks/go-mode-setup ()
     "Setup Go mode with LSP and formatting."
     ;; Format on save
     (add-hook 'before-save-hook #'gofmt-before-save nil t)
     (add-hook 'before-save-hook #'lsp-organize-imports nil t)
-    
+
     ;; Build tags (per projec configuration possible).
-    (setq-local lsp-go-build-flags 
+    (setq-local lsp-go-build-flags
                 (vector (format "-tags=%s" nemaks/go-build-tags))))
 
 
@@ -2998,7 +3058,7 @@ Nice package for systemd file editing. See the official [[https://elpa.gnu.org/p
   ;; (configuration-layer/package-used-p 'company)
   :general
 
-  (nemacs/leader-keys
+  (nemaks/leader-keys
    :major-modes '(systemd-mode)
    :keymap '(systemd-mode-map)
    "m" '(:ignore t :wk "Systemd mode")
@@ -3016,48 +3076,100 @@ Nice package for systemd file editing. See the official [[https://elpa.gnu.org/p
   :mode ("\\.py\\'" . python-mode)
   :hook
   (python-mode . lsp-deferred)
+  (python-mode . company-mode)
   (python-mode . nemaks/python-mode-setup)
   :config
   (setq python-indent-offset 4
         tab-width 4
         python-shell-interpreter "python3")
-  :general 
+  :general
   (nemaks/leader-keys
     :major-modes '(python-mode python-ts-mode)
     :keymaps '(python-mode-map)
     "m f" '(lsp-format-buffer :wk "Format buffer")
     "m i" '(lsp-organize-imports :wk "Organize imports")
-    "m r" '(lsp-rename :wk "Rename symbol")))
+    "m r" '(lsp-rename :wk "Rename symbol")
+    "m d" '(lsp-find-definition :wk "Go to definition")
+    "m D" '(lsp-find-references :wk "Find references")
+    "m h" '(lsp-describe-thing-at-point :wk "Describe at point")
+))
 
 (defun nemaks/python-mode-setup ()
   "Python setup: format + organize imports on save."
+  ;; Format on save
   (add-hook 'before-save-hook #'lsp-format-buffer nil t)
-  (add-hook 'before-save-hook #'lsp-organize-imports nil t))
+  (add-hook 'before-save-hook #'lsp-organize-imports nil t)
+)
 
 (with-eval-after-load 'lsp-mode
   ;; Ruff LSP (linting + formatting)
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-stdio-connection "ruff-lsp")
-    :activation-fn (lsp-activate-on "python")
-    :server-id 'ruff-lsp
-    :priority 10
-    :add-on? t))
-  
-  ;; Pyright (type checking)
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-stdio-connection '("pyright-langserver" "--stdio"))
-    :activation-fn (lsp-activate-on "python")
-    :server-id 'pyright
-    :priority 5
-    :multi-root t))
-  
-  ;; Config
-  (setq lsp-pyright-auto-import-completions t
-        lsp-pyright-auto-search-paths t
-        lsp-pyright-use-library-code-for-types t))
+  ;; (lsp-register-client
+  ;;  (make-lsp-client
+  ;;   :new-connection (lsp-stdio-connection
+  ;;                    (lambda ()
+  ;;                      (list (executable-find "ruff")
+  ;;                            "server"
+  ;;                            "--preview")))
+  ;;   :activation-fn (lsp-activate-on "python")
+  ;;   :server-id 'ruff-server
+  ;;   :priority 10
+  ;;   :add-on? t
+  ;;   :initialization-options
+  ;;   (lambda ()
+  ;;     (ht ("settings"
+  ;;          (ht ("lineLength" 100)
+  ;;              ("lint" (ht ("select" ["E" "W" "F" "I" "B" "C4" "UP"])
+  ;;                          ("ignore" ["E501"])))
+  ;;              ("format" (ht ("quoteStyle" "double")
+  ;;                            ("indentStyle" "space")))))))))
 
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-stdio-connection "pylsp")
+    :activation-fn (lsp-activate-on "python")
+    :server-id 'pylsp
+    :priority 5))
+
+  ;; ;; FIXME: pyright is super duper laggy. Find a fix to it.
+  ;; ;; pyright (type checking + completion + hover)
+  ;; (lsp-register-client
+  ;;  (make-lsp-client
+  ;;   :new-connection (lsp-stdio-connection '("pyright-langserver" "--stdio"))
+  ;;   :activation-fn (lsp-activate-on "python")
+  ;;   :server-id 'pyright
+  ;;   :priority 5
+  ;;   :multi-root t))
+
+  ;; ;; Config Pyright
+  ;; (setq lsp-pyright-auto-import-completions t
+  ;;       lsp-pyright-auto-search-paths t
+  ;;       lsp-pyright-diagnostic-mode "workspace"
+  ;;       lsp-pyright-use-library-code-for-types t
+  ;;       lsp-pyright-venv-path "."  ;; Cherche venv dans le projet
+  ;;       lsp-pyright-typechecking-mode "basic")
+  )
+
+;; (use-package lsp-pyright
+;;   :ensure t
+;;   :after python-mode
+;;   :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
+;;   :hook (python-mode . lsp-deferred)
+
+
+(use-package pyvenv
+  :ensure t
+  :demand t
+  :diminish
+  :config
+  ;; Auto-détecte .venv/ à l'ouverture d'un fichier Python
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (when-let* ((project-root (locate-dominating-file
+                                         default-directory "pyproject.toml"))
+                          (venv-path (expand-file-name ".venv" project-root)))
+                (when (file-directory-p venv-path)
+                  (pyvenv-activate venv-path)
+                  (message "Activated venv: %s" venv-path))))))
 #+end_src
 
 ****** php mod
@@ -3088,7 +3200,7 @@ Nice package for systemd file editing. See the official [[https://elpa.gnu.org/p
   (setq rust-format-on-save t))
 #+end_src
 
-****** web 
+****** web
 
 #+begin_src emacs-lisp
 ;; Web (HTML/JS/CSS)
@@ -3384,7 +3496,7 @@ machine gitlab.com/api/v4 login [username]^forge password [token]
     "p" '(projectile-command-map :wk "Projectile"))
   :config (add-to-list 'projectile-globally-ignored-directories "*node_modules")
   (add-to-list 'projectile-globally-ignored-directories "*vendor")
-  (projectile-register-project-type 
+  (projectile-register-project-type
    'go_make '("Makefile" "src" "etc")
    ;; :project-file '("Makefile", "src/go.mod" "src/go.sum", "src/vendor")
    ;; :compilation-dir "."
@@ -3406,7 +3518,7 @@ machine gitlab.com/api/v4 login [username]^forge password [token]
    projectile-switch-project-action #'projectile-dired))
 #+END_SRC
 
-Let's also setup counsel-projectile 
+Let's also setup counsel-projectile
 
 #+begin_src emacs-lisp
 (use-package counsel-projectile
@@ -3432,16 +3544,16 @@ Let's setup 'claude.el'
   ;; :ensure t
   ;; :vc (:url "https://github.com/stevemolitor/monet" :rev :newest)
   :ensure (;; :wait t
-                 :host github 
+                 :host github
                  :repo "stevemolitor/monet")
-  ;; :demand t 
+  ;; :demand t
   :defer t
   :general
-  (nemaks/leader-keys 
+  (nemaks/leader-keys
     "c M" '((lambda () (interactive) (monet-mode t)) :wk "Load monet"))
   ;; :config
   ;; (monet-mode 1)
-  ;; :hook 
+  ;; :hook
   ;; (prog-mode . monet-mode)
   ;; (text-mode . monet-mode)
 )
@@ -3450,7 +3562,7 @@ Let's setup 'claude.el'
 (use-package inheritenv
   ;; :ensure t
   :ensure (;; :wait t
-                 :host github 
+                 :host github
                  :repo "purcell/inheritenv")
   ;; :defer t
   :demand t
@@ -3458,18 +3570,18 @@ Let's setup 'claude.el'
   )
 
 ;; for eat terminal backend:
-(use-package eat 
+(use-package eat
   :ensure t
   :demand t
   ;; :defer t
   )
 
 ;; install claude-code.el
-(use-package claude-code 
+(use-package claude-code
   :disabled t
   ;; :ensure t
-  :ensure (;; :wait t 
-                 :host github 
+  :ensure (;; :wait t
+                 :host github
                  :repo "stevemolitor/claude-code.el")
   ;; :vc (:url "https://github.com/stevemolitor/claude-code.el" :rev :newest)
   ;; :after (monet eat inheritenv)
@@ -3489,11 +3601,10 @@ Let's setup 'claude.el'
 
   ;; Optionally define a repeat map so that "M" will cycle thru Claude auto-accept/plan/confirm modes after invoking claude-code-cycle-mode / C-c M.
   :bind
-  (:repeat-map 
+  (:repeat-map
    my-claude-code-map ("M" . claude-code-cycle-mode))
-  :hook 
+  :hook
   (prog-mode . claude-code-mode)
 )
 
 #+end_src
-
