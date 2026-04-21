@@ -1,16 +1,22 @@
 [Unit]
 Description=Emacs text editor
 Documentation=info:emacs man:emacs(1) https://gnu.org/software/emacs/
-After=sshd.service
+# After=sshd.service
 
 [Service]
-Type=forking
-# Load python3 virtual env stuff
-# force load via zsh for env var (go etc...)
-ExecStart=zsh -c "emacs -q -l /home/master/repo/perso/nemaks/emacs-init.el --init-directory=/home/master/repo/perso/nemaks --daemon"
+# Type=forking
+ExecStart=zsh -c "emacs --fg-daemon"
 ExecStop=/usr/local/bin/emacsclient --eval "(kill-emacs)"
+Restart=on-failure
+
+# Emacs will exit with status 15 after having received SIGTERM, which
+# is the default "KillSignal" value systemd uses to stop services.
+SuccessExitStatus=15
+
+# The location of the SSH auth socket varies by distribution, and some
+# set it from PAM, so don't override by default.
+# Environment=SSH_AUTH_SOCK=%t/keyring/ssh
 Restart=on-failure
 
 [Install]
 WantedBy=default.target
-
