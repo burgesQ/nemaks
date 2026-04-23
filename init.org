@@ -367,12 +367,12 @@ Set a few fonts.
 
 #+BEGIN_SRC emacs-lisp
 ;; Set fonts.
-(push '(font . "Fira Code Retina") default-frame-alist)
-(set-face-font 'default "Fira Code Retina")
-(set-face-font 'variable-pitch "Fira Code Retina")
+(push '(font . "FiraCode Nerd Font") default-frame-alist)
+(set-face-font 'default "FiraCode Nerd Font")
+(set-face-font 'variable-pitch "FiraCode Nerd Font")
 (copy-face 'default 'fixed-pitch)
 ;; NOTE: needed for emacsclient - fix reduced font size
-(add-to-list 'default-frame-alist '(font . "Fira Code Retina"))
+(add-to-list 'default-frame-alist '(font . "FiraCode Nerd Font"))
 #+END_SRC
 
 And start as a maximized window.
@@ -600,7 +600,7 @@ See the [[https://github.com/noctuid/general.el][repo]] for more info.
     "C r" '((lambda () (interactive)
               ;; (elpaca-process-queues)
               ;; (elpaca-wait)
-              (load-file "~/repo/perso/nemaks/emacs-init.el"))
+              (load-file "~/.emacs"))
             :wk "Reload emacs config")
     "C o" '((lambda () (interactive)
               (find-file "~/repo/perso/nemaks/init.org"))

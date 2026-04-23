@@ -4,10 +4,9 @@ Documentation=info:emacs man:emacs(1) https://gnu.org/software/emacs/
 # After=sshd.service
 
 [Service]
-# Type=forking
-ExecStart=zsh -c "emacs --fg-daemon"
+Type=forking
+ExecStart=zsh -c "emacs --daemon"
 ExecStop=/usr/local/bin/emacsclient --eval "(kill-emacs)"
-Restart=on-failure
 
 # Emacs will exit with status 15 after having received SIGTERM, which
 # is the default "KillSignal" value systemd uses to stop services.
