@@ -1,0 +1,3 @@
+[submodule "external/themes/ember"]
+	path = external/themes/ember
+	url = git@github.com:ember-theme/emacs

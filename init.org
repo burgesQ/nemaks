@@ -698,8 +698,12 @@ See the [[https://github.com/noctuid/general.el][repo]] for more info.
     ;; Theming sub-category.
     "t t" '(:ignore t :wk "Theme")
     "t tl" '(load-theme :wk "Load theme")
+
     "t tn" '((lambda () (interactive) (load-theme 'doom-one t)) :wk "Load night theme")
-    "t td" '((lambda () (interactive) (load-theme 'doom-one-light t)) :wk "Toggle day theme")
+    "t td" '((lambda () (interactive) (load-theme 'doom-one-light t)) :wk "Load day theme")
+
+    "t ten" '((lambda () (interactive) (load-theme 'ember-soft t)) :wk "Load ember night theme")
+    "t ted" '((lambda () (interactive) (load-theme 'ember-light t)) :wk "Load emeber  day theme")
     )
 
   ;; Windows
@@ -1150,6 +1154,33 @@ We're asking emacs to render symbol w/ apple ttf emoji.
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 #+END_SRC
+
+**** themes
+***** ember-theme
+
+#+begin_src emacs-lisp
+;; (use-package ember-theme
+;;   :vc (:url "https://github.com/ember-theme/emacs")
+;;   :ensure (:wait t)
+;;   :demand t
+;;   :config
+;;   (load-theme 'ember t)
+;;   )
+(add-to-list 'custom-theme-load-path "/home/master/repo/perso/home/external/nemaks/external/themes/ember/")
+#+end_src
+
+
+***** nano-theme
+
+#+begin_src emacs-lisp
+(use-package nano-theme
+  :vc (:url "https://github.com/rougier/nano-theme")
+  :ensure (:wait t)
+  :demand t
+  ;; :defer t
+)
+#+end_src
+
 
 **** lines/columns
 
@@ -2303,6 +2334,7 @@ Better defaults.
    ;; org-fontify-quote-and-verse-blocks t
    ;; (org-indent-mode)
    ;; visual-line-mode 1
+
 
 
    ;; edit settings (recommended by org-modern)
