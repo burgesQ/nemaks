@@ -26,7 +26,7 @@ Thanks
 :PROPERTIES:
 :COOKIE_DATA: todo recursive
 :END:
-*** TODO drop neotree in favor of treemacs (reduce deps)
+*** DONE drop neotree in favor of treemacs (reduce deps)
 *** WIP keybinding
 - [ ] migrate global-set-key to :map
 - [ ] migrate from :map to :general (+ which key)
@@ -682,7 +682,7 @@ See the [[https://github.com/noctuid/general.el][repo]] for more info.
     "t ln" '(display-line-numbers-mode :wk "Toggle line numbers")
     "t lt" '(visual-line-mode :wk "Toggle truncated lines")
 
-    "t n" '(neotree-toggle :wk "Toggle neotree file viewer")
+    "t n" '(treemacs :wk "Toggle treemacs")
     ;; "t s" '(nemaks/flyspell-toggle t :wk "Toggle spell check")
 
     ;; Theming sub-category.
@@ -1456,30 +1456,37 @@ Native to emacs29+
 
 **** tree
 
-Treemacs again ? Smth else ?
-
-
-Let's use neotree, nicer than treemacs
-
 #+begin_src emacs-lisp
-(use-package neotree
+(use-package treemacs
   :ensure (:wait t)
   :demand t
   :config
-  (setq neo-smart-open t
-        neo-show-hidden-files t
-        neo-window-width 25
-        neo-window-fixed-size nil
-        inhibit-compacting-font-caches t
-        projectile-switch-project-action 'neotree-projectile-action)
-  ;; truncate long file names in neotree
-  (add-hook 'neo-after-create-hook
-            #'(lambda (_)
-                (with-current-buffer (get-buffer neo-buffer-name)
-                  (setq truncate-lines t)
-                  (setq word-wrap nil)
-                  (make-local-variable 'auto-hscroll-mode)
-                  (setq auto-hscroll-mode nil)))))
+  (setq treemacs-width 30
+        treemacs-show-hidden-files t
+        treemacs-follow-after-init t
+        treemacs-is-never-other-window nil)
+  (treemacs-follow-mode t)
+  (treemacs-filewatch-mode t)
+  (treemacs-fringe-indicator-mode 'always)
+  :general
+  (nemaks/leader-keys
+    "t n" '(treemacs :wk "Toggle treemacs")))
+
+(use-package treemacs-projectile
+  :ensure t
+  :demand t
+  :after (treemacs projectile))
+
+(use-package treemacs-magit
+  :ensure t
+  :defer t
+  :after (treemacs magit))
+
+(use-package treemacs-nerd-icons
+  :ensure t
+  :demand t
+  :after (treemacs nerd-icons)
+  :config (treemacs-load-theme "nerd-icons"))
 #+end_src
 
 **** tabs
@@ -2728,20 +2735,6 @@ Seems to make the screen cluttered, needs a few tweaks.
     :keymaps 'prog-mode-map
     "G m" '("imenu" . lsp-ui-imenu))
   )
-#+end_src
-
-***** lsp-ivy
-
-#+begin_src emacs-lisp
-;; NOTE: company-lsp deprecated in favor of company-capf + LSP
-;; LSP + ivy
-(use-package lsp-ivy
-  :ensure (:wait t)
-  ;; :demand t
-  :after (lsp-mode ivy)
-  ;; :defer t
-  :commands
-  lsp-ivy-workspace-symbol)
 #+end_src
 
 ***** lsp-treemacs
