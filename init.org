@@ -895,9 +895,8 @@ Enable visual bells
 
 #+BEGIN_SRC emacs-lisp
 (use-package nerd-icons-dired
-  :ensure t
+  :ensure (:wait t)
   :demand t
-  :after nerd-icons
   :hook (dired-mode . nerd-icons-dired-mode))
 
 (use-package dired-open
@@ -923,43 +922,43 @@ Used by the `nemaks-features` function ATM.
 
 #+begin_src emacs-lisp
 (use-package nerd-icons
-  :ensure t
+  :ensure (:wait t)
   :demand t)
 
-(defun nemaks--font-icons (collection label &rest args)
-  "Abstraction over `nerd-icons' project.
-LABEL is a short icon description merged with COLLECTION to
-identify an icon to use. For instance, 'faicon or 'octicon.
+  (defun nemaks--font-icons (collection label &rest args)
+    "Abstraction over `nerd-icons' project.
+  LABEL is a short icon description merged with COLLECTION to
+  identify an icon to use. For instance, 'faicon or 'octicon.
 
-ARGS, a plist, contain the title, sizing and other information.
+  ARGS, a plist, contain the title, sizing and other information.
 
-For instance:
-  (font-icons 'faicon \"file\" :title \"File Management\")
+  For instance:
+    (font-icons 'faicon \"file\" :title \"File Management\")
 
-The goal is to take:
-  (all-the-icons-octicon \"git-branch\")
-And reformat to:
-  (font-icons 'octicon \"git-branch\")"
-  (let* ((func (intern (format "nerd-icons-%s" collection)))
-         (short (cl-case collection
-                  (octicon "oct")
-                  (faicon "fa")
-                  (mdicon "md")
-                  (codicon "cod")
-                  (sucicon "custom")
-                  (devicon "dev")
-                  (t collection)))
-         (title (plist-get args :title))
-         (space (plist-get args :space))
-         (icon (format "nf-%s-%s" short
-                       (string-replace "-" "_" label))))
+  The goal is to take:
+    (all-the-icons-octicon \"git-branch\")
+  And reformat to:
+    (font-icons 'octicon \"git-branch\")"
+    (let* ((func (intern (format "nerd-icons-%s" collection)))
+           (short (cl-case collection
+                    (octicon "oct")
+                    (faicon "fa")
+                    (mdicon "md")
+                    (codicon "cod")
+                    (sucicon "custom")
+                    (devicon "dev")
+                    (t collection)))
+           (title (plist-get args :title))
+           (space (plist-get args :space))
+           (icon (format "nf-%s-%s" short
+                         (string-replace "-" "_" label))))
 
-    ;; With the appropriate nerd-icons function name,
-    ;; an expanded icon name, we get the icon string:
-    (concat (apply func (cons icon args))
-            (cond
-             ((and title space) (concat (s-repeat space " ") title))
-             (title             (concat " " title))))))
+      ;; With the appropriate nerd-icons function name,
+      ;; an expanded icon name, we get the icon string:
+      (concat (apply func (cons icon args))
+              (cond
+               ((and title space) (concat (s-repeat space " ") title))
+               (title             (concat " " title))))))
 
 #+end_src
 
