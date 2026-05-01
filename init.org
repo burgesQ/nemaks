@@ -1612,175 +1612,11 @@ So let's show them:
 #+END_SRC
 *** completion
 
-Generic auto-complete with boosted Ivy + company.
+Stack moderne : vertico (minibuffer) + consult (commandes enrichies) + corfu (in-buffer) + nerd-icons.
 
-**** company
-
-On-The-Fly typing completion + box
+**** history
 
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :ensure (:wait t)
-  :demand t
-  :diminish
-  :config
-  (setq
-   ;; don't add any delay before trying to complete thing being typed
-   ;; the call/response to gopls is asynchronous so this should have little
-   ;; to no affect on edit latency
-   company-idle-delay .1
-   ;; start completing after a single character instead of 3
-   company-minimum-prefix-length 2
-   ;; show number
-   company-show-numbers t
-   ;; align fields in completions
-   company-tooltip-align-annotations t
-   ;; LSP compatibility
-   company-backends '(company-capf))
-  :hook
-  ;; lang
-  (prog-mode . company-mode)
-  ;; org, markdown & co
-  (text-mode . company-mode))
-
-(global-set-key (kbd "TAB")
-                #'company-indent-or-complete-common)
-
-(use-package company-box
-  :ensure (:wait t)
-  :demand t
-  :after company
-  :diminish
-  :hook (company-mode . company-box-mode))
-#+END_SRC
-
-**** ivy
-
-See the [[https://github.com/abo-abo/swiper#ivy][repo (swiper#ivy)]].
-
-#+begin_src emacs-lisp
-;; Use 'ivy' instead of 'helm' (default).
-(use-package ivy
-  :ensure t
-  :demand t
-  :diminish ivy-mode
-  ;; TODO: which-key
-  :bind ;; TODO: convert to  geneal
-  (
-   :map ivy-minibuffer-map
-   ("<left>" . ivy-backward-delete-char)
-   ;; ("TAB" . ivy-alt-done)
-   ;; ("C-l" . ivy-alt-done)
-   ;; ("C-j" . ivy-next-line)
-   ;; ("C-k" . ivy-previous-line)
-   :map ivy-switch-buffer-map
-   ("<left>" . ivy-backward-delete-char)
-   ;; ("C-k" . ivy-previous-line)
-   ;; ("C-l" . ivy-done)
-   ;; ("C-d" . ivy-switch-buffer-kill)
-   :map ivy-reverse-i-search-map
-   ;; ("C-k" . ivy-previous-line)
-   ;; ("C-d" . ivy-reverse-i-search-kill)
-   ("<left>" . ivy-backward-delete-char))
-  :config
-  (setq ivy-use-virtual-buffers t
-        ivy-count-format "%d/%d "
-        ivy-truncate-lines nil)
-  ;; (global-set-key (kbd "C-x b") 'ivy-switch-buffer)
-  (ivy-mode 1))
-
-(setq ivy-use-selectable-prompt t)
-#+end_src
-
-**** ivy-prescient
-
-#+begin_src emacs-lisp
-;; prescient.el is a library which sorts and filters lists of candidates
-;; Conflict with smex, disabling sorting fix it
-(use-package ivy-prescient
-  :ensure (:wait t)
-  :demand t
-  :after ivy
-  :init
-  ;; Disable prescient sorting to coop w/ smex.
-  (setq ivy-prescient-enable-sorting nil)
-  :config
-  (ivy-prescient-mode))
-#+end_src
-
-**** ivy-rich
-
-#+begin_src emacs-lisp
-(use-package ivy-rich
-  :ensure t
-  :demand t
-  :after ivy
-  :init  (ivy-rich-mode 1)
-  :custom
-  (ivy-virtual-abbreviate
-   'full
-   ivy-rich-switch-buffer-align-virtual-buffer t
-   ivy-rich-path-style 'abbrev)
-  :config
-  (ivy-set-display-transformer
-   'ivy-switch-buffer
-   'ivy-rich-switch-buffer-transformer))
-
-(use-package all-the-icons-ivy-rich
-  :ensure t
-  :demand t
-  :after (ivy-rich) ;; all-the-icons
-  :init (all-the-icons-ivy-rich-mode 1))
-#+end_src
-
-**** swiper
-
-Enhance Ivy with [[https://github.com/abo-abo/swiper][swiper]].
-
-#+begin_src emacs-lisp
-(use-package swiper
-  :ensure t
-  :after (ivy general)
-  :defer t
-  :commands (swiper swiper-isearch)  ;; Autoload seulement quand appelé
-  :general
-  (general-define-key
-   "C-s" '(swiper-isearch :wk "Search with swiper")))
-#+end_src
-
-**** counsel
-
-Spread ivy to M-x with [[https://github.com/abo-abo/swiper#counsel][counsel (ivy#counsel)]].
-
-#+begin_src  emacs-lisp
-(use-package counsel
-  :ensure (:wait t)
-  :demand t
-  :diminish
-  :after (general ivy)
-  :config
-  (counsel-mode)
-  :general
-  (general-define-key
-   "C-x b" '(counsel-switch-buffer :wk "Better file buffer")
-   "C-x C-f" '(counsel-find-file :wk "Beffer find file")
-   ;; "M-x" . '(counsel-M-x :wk "Powa")
-   ;;)
-   ;; (general-define-key
-   ;; :map minibuffer-local-map
-   ;;   "C-r" . '(counsel-minibuffer-history :wk "Reverse history search")
-   )
-  )
-
-#+end_src
-
-**** smex
-
-Enhance ivy & other with frequently / most used invocation.
-See [[https://github.com/nonsequitur/smex][the official repo]] for more.
-
-#+BEGIN_SRC emacs-lisp
-;; Persist history accross runs
 (use-feature savehist
   :ensure nil
   :demand t
@@ -1791,17 +1627,113 @@ See [[https://github.com/nonsequitur/smex][the official repo]] for more.
   (setq savehist-additional-variables
         '(kill-ring search-ring regexp-search-ring))
   (savehist-mode 1))
+#+END_SRC
 
-(use-package smex
+**** vertico
+
+Minibuffer completion UI vertical.
+See [[https://github.com/minad/vertico][repo]].
+
+#+begin_src emacs-lisp
+(use-package vertico
+  :ensure (:wait t)
+  :demand t
+  :config
+  (vertico-mode))
+#+end_src
+
+**** orderless
+
+Fuzzy/flex completion style.
+See [[https://github.com/oantolin/orderless][repo]].
+
+#+begin_src emacs-lisp
+(use-package orderless
+  :ensure (:wait t)
+  :demand t
+  :config
+  (setq completion-styles '(orderless basic)
+        completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
+
+**** consult
+
+Enhanced commands replacing counsel + swiper.
+See [[https://github.com/minad/consult][repo]].
+
+#+begin_src emacs-lisp
+(use-package consult
+  :ensure (:wait t)
+  :demand t
+  :after general
+  :general
+  (general-define-key
+   "C-s"     '(consult-line   :wk "Search in buffer")
+   "C-x b"   '(consult-buffer :wk "Switch buffer")
+   "C-x C-f" '(find-file      :wk "Find file"))
+  (nemaks/leader-keys
+   "b b" '(consult-buffer :wk "Switch buffer")))
+#+end_src
+
+**** nerd-icons-completion
+
+Nerd-icons dans le minibuffer vertico.
+
+#+begin_src emacs-lisp
+(use-package nerd-icons-completion
   :ensure t
   :demand t
-  :after (ivy counsel)
-  :init
+  :after (nerd-icons marginalia)
+  :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
   :config
-  (smex-initialize)
-  ;; Save history periodically.
-  (smex-auto-update))
-#+END_SRC
+  (nerd-icons-completion-mode))
+#+end_src
+
+**** corfu
+
+In-buffer completion popup (remplace company).
+See [[https://github.com/minad/corfu][repo]].
+
+#+begin_src emacs-lisp
+(use-package corfu
+  :ensure (:wait t)
+  :demand t
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0.1)
+  (corfu-auto-prefix 2)
+  (corfu-quit-no-match 'separator)
+  :config
+  (global-corfu-mode))
+#+end_src
+
+**** cape
+
+Completion-at-point extensions pour corfu.
+See [[https://github.com/minad/cape][repo]].
+
+#+begin_src emacs-lisp
+(use-package cape
+  :ensure t
+  :demand t
+  :after corfu
+  :config
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file))
+#+end_src
+
+**** nerd-icons-corfu
+
+Nerd-icons dans le popup corfu.
+
+#+begin_src emacs-lisp
+(use-package nerd-icons-corfu
+  :ensure t
+  :demand t
+  :after (corfu nerd-icons)
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+#+end_src
 
 *** QoL
 
