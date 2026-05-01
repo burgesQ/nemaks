@@ -1978,24 +1978,6 @@ Visual Studio like - see [[https://github.com/sebastiencs/omnibox][here]] for mo
 ;; bind default projectile-find-file to omnibox one
 ;; (setq projectile-switch-project-action 'omnibox-projectile-find-file)
 
-;; counsel--M-x candidates sourced from source code
-;; see https://github.com/abo-abo/swiper/blob/595d44264420d989e420351ea25b3c99528547c0/counsel.el#L856
-
-;; ;; this is a wip
-(defun omnibox-counsel-M-x ()
-  """Spawm counsel-M-x into an omnibox widget."""
-  (interactive)
-  (omnibox
-   :prompt "M-x: "
-   :candidates (counsel--M-x-externs)
-   ;; :history extended-command-history
-   :detail 'omnibox--function-doc
-   :action (lambda (candidate)
-             (when candidate
-               (counsel-M-x-action candidate)))
-  :title "Omnibox counsel M-x"
-  :require-match t))
-
 ;; (global-set-key (kbd "M-x") 'omnibox-counsel-M-x)
 #+END_SRC
 
@@ -2721,15 +2703,6 @@ $ go -u install \
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
-;; install go support for company
-(use-package company-go
-  :ensure t
-  :defer t
-  :hook
-  (go-mode-hook . (lambda ()
-                    (set (make-local-variable 'company-backends) '(company-go))
-                    (company-mode))))
-
 ;; install flycheck support for golangci-lint
 (use-package flycheck-golangci-lint
   :ensure t
@@ -2876,8 +2849,7 @@ Nice package for systemd file editing. See the official [[https://elpa.gnu.org/p
   :defer t
   :after general
   :init
-  (setq systemd-use-company-p t)
-  ;; (configuration-layer/package-used-p 'company)
+  (setq systemd-use-company-p nil)
   :general
 
   (nemaks/leader-keys
@@ -2898,7 +2870,6 @@ Nice package for systemd file editing. See the official [[https://elpa.gnu.org/p
   :mode ("\\.py\\'" . python-mode)
   :hook
   (python-mode . lsp-deferred)
-  (python-mode . company-mode)
   (python-mode . nemaks/python-mode-setup)
   :config
   (setq python-indent-offset 4
@@ -3080,7 +3051,7 @@ https://www.flycheck.org/en/latest/
     ;; "e b" '("error buffer"     . flycheck-buffer)
     "e c" '("clear"            . flycheck-clear)
     "e l" '("list all"         . flycheck-list-errors)
-    "e g" '("goto error"       . counsel-flycheck)
+    "e g" '("goto error"       . flycheck-list-errors)
     "e y" '("copy errors"      . flycheck-copy-errors-as-kill)
     "e s" '("select checker"   . flycheck-select-checker)
     "e ?" '("describe checker" . flycheck-describe-checker)
@@ -3328,7 +3299,7 @@ machine gitlab.com/api/v4 login [username]^forge password [token]
    :test-suffix "_test.go")
   (projectile-mode 1)
   :custom
-  ((project-completion-system 'ivy))
+  ((project-completion-system 'default))
   :init
   (when (file-directory-p "~/repo")
     (setq projectile-project-search-path '("~/repo")))
@@ -3337,17 +3308,6 @@ machine gitlab.com/api/v4 login [username]^forge password [token]
    projectile-enable-caching t
    projectile-switch-project-action #'projectile-dired))
 #+END_SRC
-
-Let's also setup counsel-projectile
-
-#+begin_src emacs-lisp
-(use-package counsel-projectile
-  :ensure t
-  :demand t
-  :diminish
-  :after (counsel)
-  :config (counsel-projectile-mode))
-#+end_src
 
 **** claude.el
 
