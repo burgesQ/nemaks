@@ -883,29 +883,14 @@ Enable visual bells
                     :height 295 :weight 'regular)
 #+END_SRC
 
-***** all-the-icons / dired
-
-Seems [[https://github.com/rainstormstudio/nerd-icons.el][nerd icons]] may be a nice alternative.
+***** nerd-icons-dired
 
 #+BEGIN_SRC emacs-lisp
-;; Please run M-x all-the-icons-install-fonts
-(use-package all-the-icons
-  :ensure (:wait t)
+(use-package nerd-icons-dired
+  :ensure t
   :demand t
-  :if (display-graphic-p))
-
-;; (use-package dired-single) --> not found starting 30.0 ?
-
-(use-package all-the-icons-dired
-  :ensure (:wait t)
-  :demand t
-  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
-
-(use-package all-the-icons-completion
-  :ensure (:wait t)
-  :demand t
-  :after (all-the-icons)
-  :init (all-the-icons-completion-mode))
+  :after nerd-icons
+  :hook (dired-mode . nerd-icons-dired-mode))
 
 (use-package dired-open
   :ensure (:wait t)
@@ -1355,7 +1340,7 @@ Nice welcome screen. See the official
 (use-package dashboard
   :ensure (:wait t)
   ;; :demand t
-  :after (all-the-icons nerd-icons projectile page-break-lines s general)
+  :after (nerd-icons projectile page-break-lines s general)
   :init
   (defun nemaks-dashboard-version ()
     (let ((smaller-version (replace-regexp-in-string
@@ -1394,10 +1379,8 @@ Nice welcome screen. See the official
   ;; Disaply package & loadtime metrics.
   (setq dashboard-set-init-info t)
 
-  (setq dashboard-icon-type 'all-the-icons) ;; use `all-the-icons' package
-  (setq dashboard-display-icons-p t) ;; use `all-the-icons' package
-
-  (setq dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+  (setq dashboard-icon-type 'nerd-icons)
+  (setq dashboard-display-icons-p t)
 
   ;; IDEA: random cover in a dir
   (setq dashboard-startup-banner "/home/master/repo/perso/nemaks/logo/aum.xpm")
