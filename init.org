@@ -891,31 +891,6 @@ Enable visual bells
                     :height 295 :weight 'regular)
 #+END_SRC
 
-***** nerd-icons-dired
-
-#+BEGIN_SRC emacs-lisp
-(use-package nerd-icons-dired
-  :ensure (:wait t)
-  :demand t
-  :hook (dired-mode . nerd-icons-dired-mode))
-
-(use-package dired-open
-  :ensure (:wait t)
-  :demand t
-  :config
-  ;; Doesn't work as expected!
-  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-  (setq dired-open-extensions '(("png" . "feh")
-                                ("mkv" . "mpv"))))
-
-(use-package dired-hide-dotfiles
-  :ensure (:wait t)
-  :demand t
-  :hook (dired-mode . dired-hide-dotfiles-mode))
-#+END_SRC
-
-The way we access the font icons has always been … odd; needing to specify the collection, etc. I would like to come up with a better mechanism, so the following function abstracts that as I figure out a better solution.
-
 ***** nerd-icons
 
 Used by the `nemaks-features` function ATM.
@@ -961,6 +936,31 @@ Used by the `nemaks-features` function ATM.
                (title             (concat " " title))))))
 
 #+end_src
+
+***** nerd-icons-dired
+
+#+BEGIN_SRC emacs-lisp
+(use-package nerd-icons-dired
+  :ensure (:wait t)
+  :demand t
+  :hook (dired-mode . nerd-icons-dired-mode))
+
+(use-package dired-open
+  :ensure (:wait t)
+  :demand t
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  (setq dired-open-extensions '(("png" . "feh")
+                                ("mkv" . "mpv"))))
+
+(use-package dired-hide-dotfiles
+  :ensure (:wait t)
+  :demand t
+  :hook (dired-mode . dired-hide-dotfiles-mode))
+#+END_SRC
+
+The way we access the font icons has always been … odd; needing to specify the collection, etc. I would like to come up with a better mechanism, so the following function abstracts that as I figure out a better solution.
 
 ***** ligature
 
@@ -1472,8 +1472,7 @@ Native to emacs29+
 
 (use-package treemacs-magit
   :ensure t
-  :defer t
-  :after (treemacs magit))
+  :defer t)
 
 (use-package treemacs-nerd-icons
   :ensure t
