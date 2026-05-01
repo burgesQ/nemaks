@@ -22,16 +22,22 @@ Thanks
 :PROPERTIES:
 :COOKIE_DATA: todo recursive
 :END:
-** TODO v1 [13/16] [81%]
+** TODO v1 [13/18] [72%]
 :PROPERTIES:
 :COOKIE_DATA: todo recursive
 :END:
 *** DONE drop neotree in favor of treemacs (reduce deps)
+*** TODO move omnibox stuffs
 *** WIP keybinding
 - [ ] migrate global-set-key to :map
 - [ ] migrate from :map to :general (+ which key)
 *** WIP strange warning when Ctrl-X Ctrl-V
 > Buffer  **lose** modified; kill anyway? (yes, no, save and then kill, ?):
+*** strange warning when saving file
+Error from syntax checker org-lint: Wrong type argument: number-or-marker-p, #("78" 0 2 (org-lint-marker #<marker at 2335 in init.org>))
+*** TODO strange warning at start
+- [ ] ■  Warning (elpaca): Init installer version does not match /home/master/.emacs.d/elpaca/builds/elpaca/doc/installer.el.
+- [ ] ■  Warning (emacs): elpaca loaded before Elpaca activation
 *** DONE LSP
 *** DONE claude-el
 *** DONE treesitter (another attempt)
@@ -45,6 +51,7 @@ Thanks
 *** DONE [fly/spell/*]check
 *** DONE magit
 *** DONE org
+
 * how to use
 
 #+begin_example console
@@ -142,6 +149,7 @@ Quick helper
 +      ;; v1.x or fallback: Use legacy format
 +    ;;'("--out-format=checkstyle")))
 #+end_src
+
 
 * TODO the config [0/7]
 :PROPERTIES:
@@ -1148,12 +1156,12 @@ We're asking emacs to render symbol w/ apple ttf emoji.
 ***** nano-theme
 
 #+begin_src emacs-lisp
-(use-package nano-theme
-  :vc (:url "https://github.com/rougier/nano-theme")
-  :ensure (:wait t)
-  :demand t
-  ;; :defer t
-)
+;; (use-package nano-theme
+;;   :vc (:url "https://github.com/rougier/nano-theme")
+;;   :ensure (:wait t)
+;;   :demand t
+;;   ;; :defer t
+;; )
 #+end_src
 
 
@@ -1340,7 +1348,7 @@ Nice welcome screen. See the official
 (use-package dashboard
   :ensure (:wait t)
   ;; :demand t
-  :after (nerd-icons projectile page-break-lines s general)
+  :after (nerd-icons projectile page-break-lines general)
   :init
   (defun nemaks-dashboard-version ()
     (let ((smaller-version (replace-regexp-in-string
@@ -1358,7 +1366,10 @@ Nice welcome screen. See the official
   (setq dashboard-footer-messages (list (nemaks--dad-joke)))
 
   ;; Set dashboard as initial buffer.
-  (setq initial-buffer-choice 'dashboard-refresh-buffer)
+  (setq initial-buffer-choice 'dashboard-open)
+  ;; nerd icon refresh !?
+  ;;(add-hook 'server-after-make-frame-hook 'dashboard-open)
+
   ;; Set projectile as project backend.
   (setq dashboard-projects-backend 'projectile)
 
@@ -2497,7 +2508,7 @@ Useful when inserting code block into org files
   :after org
   :diminish
   :config (setq olivetti-body-width 0.95)
-  ;; :hook (org-mode . olivetti-mode)
+  :hook (org-mode . olivetti-mode)
 )
 #+end_src
 
@@ -2564,28 +2575,42 @@ Let's setup the famous `lsp-mode`
   (lsp-headerline-breadcrumb-mode)
 )
 
-;; Register makefile.
+;; Disable autotools-ls spécifiquement
 (with-eval-after-load 'lsp-mode
-  (add-to-list 'lsp-language-id-configuration '(makefile-mode . "makefile"))
-  (add-to-list 'lsp-language-id-configuration '(makefile-gmake-mode . "makefile"))
+  (add-to-list 'lsp-disabled-clients 'autotools-ls))
 
-  ;; Setup autotool for makefile.
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-stdio-connection "autotools-language-server")
-    :activation-fn (lsp-activate-on "makefile")
-    :major-modes '(makefile-mode makefile-gmake-mode makefile-automake-mode)
-    :server-id 'autotools-ls))
+;; Disable lsp for makefile ?
+;; (add-hook 'makefile-mode-hook
+;;           (lambda ()
+;;             (lsp-mode -1)))
+;; (add-hook 'makefile-gmake-mode-hook
+;;           (lambda ()
+;;             (lsp-mode -1)))
 
-  ;; ;; Setup makels for makefile.
-  ;; (lsp-register-client
-  ;;  (make-lsp-client
-  ;;   :new-connection (lsp-stdio-connection "makels")
-  ;;   :activation-fn (lsp-activate-on "makefile")
-  ;;   :major-modes '(makefile-mode makefile-gmake-mode)
-  ;;   :priority 0
-  ;;   :server-id 'makels))
-  )
+
+
+;; Register makefile.
+;; (with-eval-after-load 'lsp-mode
+;;   (add-to-list 'lsp-language-id-configuration '(makefile-mode . "makefile"))
+;;   (add-to-list 'lsp-language-id-configuration '(makefile-gmake-mode . "makefile"))
+
+;;   ;; Setup autotool for makefile.
+;;   (lsp-register-client
+;;    (make-lsp-client
+;;     :new-connection (lsp-stdio-connection "autotools-language-server")
+;;     :activation-fn (lsp-activate-on "makefile")
+;;     :major-modes '(makefile-mode makefile-gmake-mode makefile-automake-mode)
+;;     :server-id 'autotools-ls))
+
+;;   ;; ;; Setup makels for makefile.
+;;   ;; (lsp-register-client
+;;   ;;  (make-lsp-client
+;;   ;;   :new-connection (lsp-stdio-connection "makels")
+;;   ;;   :activation-fn (lsp-activate-on "makefile")
+;;   ;;   :major-modes '(makefile-mode makefile-gmake-mode)
+;;   ;;   :priority 0
+;;   ;;   :server-id 'makels))
+;;   )
 
 #+end_src
 
@@ -2923,30 +2948,29 @@ Nice package for systemd file editing. See the official [[https://elpa.gnu.org/p
     :server-id 'pylsp
     :priority 5))
 
-  ;; ;; FIXME: pyright is super duper laggy. Find a fix to it.
-  ;; ;; pyright (type checking + completion + hover)
-  ;; (lsp-register-client
-  ;;  (make-lsp-client
-  ;;   :new-connection (lsp-stdio-connection '("pyright-langserver" "--stdio"))
-  ;;   :activation-fn (lsp-activate-on "python")
-  ;;   :server-id 'pyright
-  ;;   :priority 5
-  ;;   :multi-root t))
+  ;; pyright (type checking + completion + hover)
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-stdio-connection '("pyright-langserver" "--stdio"))
+    :activation-fn (lsp-activate-on "python")
+    :server-id 'pyright
+    :priority 5
+    :multi-root t))
 
-  ;; ;; Config Pyright
-  ;; (setq lsp-pyright-auto-import-completions t
-  ;;       lsp-pyright-auto-search-paths t
-  ;;       lsp-pyright-diagnostic-mode "workspace"
-  ;;       lsp-pyright-use-library-code-for-types t
-  ;;       lsp-pyright-venv-path "."  ;; Cherche venv dans le projet
-  ;;       lsp-pyright-typechecking-mode "basic")
+  ;; Config Pyright
+  (setq lsp-pyright-auto-import-completions t
+        lsp-pyright-auto-search-paths t
+        lsp-pyright-diagnostic-mode "workspace"
+        lsp-pyright-use-library-code-for-types t
+        lsp-pyright-venv-path "."  ;; Cherche venv dans le projet
+        lsp-pyright-typechecking-mode "basic")
   )
 
-;; (use-package lsp-pyright
-;;   :ensure t
-;;   :after python-mode
-;;   :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
-;;   :hook (python-mode . lsp-deferred)
+(use-package lsp-pyright
+  :ensure t
+  :after python-mode
+  :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
+  :hook (python-mode . lsp-deferred))
 
 
 (use-package pyvenv
