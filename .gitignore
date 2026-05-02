@@ -2,6 +2,7 @@
 !init.org
 !emacs-init.el
 !.gitignore
+!CLAUDE.md
 !logo
 !emacs.service
 !README.org

@@ -22,7 +22,7 @@ Thanks
 :PROPERTIES:
 :COOKIE_DATA: todo recursive
 :END:
-** TODO v1 [13/18] [72%]
+** TODO v1
 :PROPERTIES:
 :COOKIE_DATA: todo recursive
 :END:
@@ -32,9 +32,15 @@ Thanks
 - [ ] migrate global-set-key to :map
 - [ ] migrate from :map to :general (+ which key)
 *** WIP strange warning when Ctrl-X Ctrl-V
+#+begin_example
 > Buffer  **lose** modified; kill anyway? (yes, no, save and then kill, ?):
-*** strange warning when saving file
+#+end_example
+*** DONE strange warning when saving file
+
+#+begin_example
 Error from syntax checker org-lint: Wrong type argument: number-or-marker-p, #("78" 0 2 (org-lint-marker #<marker at 2335 in init.org>))
+#+end_example
+
 *** TODO strange warning at start
 - [ ] ■  Warning (elpaca): Init installer version does not match /home/master/.emacs.d/elpaca/builds/elpaca/doc/installer.el.
 - [ ] ■  Warning (emacs): elpaca loaded before Elpaca activation
@@ -44,10 +50,7 @@ Error from syntax checker org-lint: Wrong type argument: number-or-marker-p, #("
 *** DONE early init
 *** DONE elpa management
 *** DONE key describe (helpful)
-*** DONE UI [3/3]
-**** DONE dashboard
-**** DONE fonts / faces / emojies / ligatures
-**** DONE other stuffs (windows, box)
+*** DONE UI
 *** DONE [fly/spell/*]check
 *** DONE magit
 *** DONE org
@@ -82,7 +85,7 @@ $ emacsclient -nc
 
 ** chemacs2
 
-Multiple emacs version may coexist, thanks to [[ttps://github.com/plexus/chemacs2.git][chemacs2]] -
+Multiple emacs version may coexist, thanks to [[https://github.com/plexus/chemacs2.git][chemacs2]] -
 
 #+BEGIN_EXAMPLE shell
 $ git clone https://github.com/plexus/chemacs2.git ~/.emacs.d
@@ -151,9 +154,8 @@ Quick helper
 #+end_src
 
 
-* TODO the config [0/7]
+* the config
 :PROPERTIES:
-:COOKIE_DATA: todo recursive
 :END:
 ** early-init
 
@@ -277,6 +279,9 @@ The following is a table shows values from popular Emacs configurations.
      (when (boundp 'after-focus-change-function)
        (add-function :after after-focus-change-function #'+nemaks/gc-after-focus-change))
      )))
+
+;; enable gbc msg
+(setq garbage-collection-messages t)
 
 (add-hook 'emacs-startup-hook #'+nemaks/better-init-values)
 #+END_SRC
@@ -422,7 +427,7 @@ See the [[https://github.com/progfolio/elpaca#installer][repo instructions]] for
 ;; Package manager (elpaca)
 ;;
 
-(defvar elpaca-installer-version 0.11)
+(defvar elpaca-installer-version 0.12)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -515,7 +520,8 @@ And the use-feature one
 Few early packages
 
 #+begin_src emacs-lisp
-(elpaca-process-queues)
+;; (elpaca-process-queues)
+;; (elpaca-wait)
 ;;(elpaca-wait)
 (use-package s
   :ensure (:wait t)
@@ -2605,7 +2611,7 @@ Let's setup the famous `lsp-mode`
 
 ***** lsp-ui
 
-The [[The lsp-ui project offers much of the display and interface to LSP. Seems to make the screen cluttered.][lsp-ui]] project offers much of the display and
+The [[https://github.com/emacs-lsp/lsp-ui][lsp-ui]] project offers much of the display and
 interface to LSP.
 Seems to make the screen cluttered, needs a few tweaks.
 
