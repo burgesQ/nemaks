@@ -1416,7 +1416,7 @@ Nice welcome screen. See the official
   (setq initial-buffer-choice 'dashboard-refresh-buffer)
 
   (dashboard-setup-startup-hook)
-  (dashboard-modify-heading-icons '((recents . "file-text")))
+;;  (dashboard-modify-heading-icons '((recents . "file-text")))
 
 
   ;; Fonction pour ouvrir le dashboard dans un nouvel onglet
@@ -1464,15 +1464,6 @@ Native to emacs29+
   :general
   (nemaks/leader-keys
     "t n" '(treemacs :wk "Toggle treemacs")))
-
-(use-package treemacs-projectile
-  :ensure t
-  :demand t
-  :after (treemacs projectile))
-
-(use-package treemacs-magit
-  :ensure t
-  :defer t)
 
 (use-package treemacs-nerd-icons
   :ensure t
@@ -3261,6 +3252,12 @@ All credit to the [[https://www.emacswiki.org/emacs/FlySpell][emacswiki]].
     )
 )
 
+
+(use-package treemacs-magit
+  :ensure t
+  :after (magit treemacs)
+  :defer t)
+
 (use-package magit-todos
   :ensure t
   :after (magit forge))
@@ -3329,6 +3326,14 @@ machine gitlab.com/api/v4 login [username]^forge password [token]
    projectile-indexing-method 'alien
    projectile-enable-caching t
    projectile-switch-project-action #'projectile-dired))
+
+
+(use-package treemacs-projectile
+  :ensure t
+  :demand t
+  :after (treemacs projectile))
+
+
 #+END_SRC
 
 **** claude.el
