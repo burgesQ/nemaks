@@ -2973,15 +2973,19 @@ Nice package for systemd file editing. See the official [[https://elpa.gnu.org/p
   :demand t
   :diminish
   :config
-  ;; Auto-détecte .venv/ à l'ouverture d'un fichier Python
+  ;; Auto-detect .venv/ (uv/virtualenv) on Python file open.
+  ;; lsp-pyright-python-path is set buffer-local before LSP connects so
+  ;; pyright resolves the venv's site-packages for completion.
   (add-hook 'python-mode-hook
             (lambda ()
               (when-let* ((project-root (locate-dominating-file
                                          default-directory "pyproject.toml"))
-                          (venv-path (expand-file-name ".venv" project-root)))
-                (when (file-directory-p venv-path)
+                          (venv-path (expand-file-name ".venv" project-root))
+                          (python-bin (expand-file-name ".venv/bin/python" project-root)))
+                (when (file-exists-p python-bin)
+                  (setq-local lsp-pyright-python-path python-bin)
                   (pyvenv-activate venv-path)
-                  (message "Activated venv: %s" venv-path))))))
+                  (message "uv venv activated: %s" venv-path))))))
 #+end_src
 
 ****** php mod
