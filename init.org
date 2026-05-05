@@ -3032,7 +3032,41 @@ Nice package for systemd file editing. See the official [[https://elpa.gnu.org/p
 ****** TODO c/c++ mod
 
 ****** TODO cmake
-****** TODO markdown + vmd
+****** markdown
+
+LSP via [[https://github.com/artempyanykh/marksman][marksman]] (~cargo install marksman~).
+Live preview via [[https://github.com/nickcoutsos/vmd][vmd]] (~npm install -g vmd~).
+
+Note: ~:ensure nil~ because ~markdown-mode~ is pulled in as a transitive dep of ~lsp-mode~/~lsp-ui~.
+
+#+begin_src emacs-lisp
+;; markdown-mode is already queued by lsp-mode/lsp-ui — configure only
+(use-package markdown-mode
+  :ensure nil
+  :defer t
+  :mode (("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :hook
+  (markdown-mode . lsp-deferred)
+  :init
+  (setq markdown-fontify-code-blocks-natively t)
+  :general
+  (nemaks/leader-keys
+    :major-modes '(markdown-mode)
+    :keymaps '(markdown-mode-map)
+    "m f" '(lsp-format-buffer :wk "Format buffer")
+    "m r" '(lsp-rename :wk "Rename symbol")
+    "m v" '(vmd-mode :wk "vmd live preview")
+    "m p" '(markdown-preview :wk "Built-in preview")
+    "m t" '(markdown-toggle-markup-hiding :wk "Toggle markup")
+    "m l" '(markdown-insert-link :wk "Insert link")
+    "m h" '(markdown-insert-header-dwim :wk "Insert header")))
+
+;; Live preview in a dedicated window (requires: npm install -g vmd)
+(use-package vmd-mode
+  :ensure t
+  :defer t)
+#+end_src
 ****** TODO toml mod
 **** on the fly checkers
 
