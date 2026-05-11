@@ -1647,8 +1647,16 @@ See [[https://github.com/minad/vertico][repo]].
   :demand t
   :config
   (vertico-mode)
-  (define-key vertico-map (kbd "M-p") #'minibuffer-previous-history-element)
-  (define-key vertico-map (kbd "M-n") #'minibuffer-next-history-element))
+  (defun nemaks/minibuffer-override-history-keys ()
+    ;; git-commit-mode binds M-p/M-n globally via minor-mode-map-alist, which
+    ;; beats vertico-map (local map). Push overrides into the higher-priority
+    ;; minor-mode-overriding-map-alist so history navigation wins in minibuffers.
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "M-p") #'previous-history-element)
+      (define-key map (kbd "M-n") #'next-history-element)
+      (setq-local minor-mode-overriding-map-alist
+                  (cons (cons t map) minor-mode-overriding-map-alist))))
+  (add-hook 'minibuffer-setup-hook #'nemaks/minibuffer-override-history-keys))
 #+end_src
 
 **** orderless
