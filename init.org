@@ -26,7 +26,6 @@ Thanks
 :PROPERTIES:
 :COOKIE_DATA: todo recursive
 :END:
-*** DONE drop neotree in favor of treemacs (reduce deps)
 *** TODO move omnibox stuffs
 *** WIP keybinding
 - [ ] migrate global-set-key to :map
@@ -35,15 +34,16 @@ Thanks
 #+begin_example
 > Buffer  **lose** modified; kill anyway? (yes, no, save and then kill, ?):
 #+end_example
+*** DONE drop neotree in favor of treemacs (reduce deps)
 *** DONE strange warning when saving file
 
 #+begin_example
 Error from syntax checker org-lint: Wrong type argument: number-or-marker-p, #("78" 0 2 (org-lint-marker #<marker at 2335 in init.org>))
 #+end_example
 
-*** TODO strange warning at start
-- [ ] ■  Warning (elpaca): Init installer version does not match /home/master/.emacs.d/elpaca/builds/elpaca/doc/installer.el.
-- [ ] ■  Warning (emacs): elpaca loaded before Elpaca activation
+*** DONE strange warning at start
+- [X] ■  Warning (elpaca): Init installer version does not match /home/master/.emacs.d/elpaca/builds/elpaca/doc/installer.el.
+- [X] ■  Warning (emacs): elpaca loaded before Elpaca activation
 *** DONE LSP
 *** DONE claude-el
 *** DONE treesitter (another attempt)
@@ -54,6 +54,7 @@ Error from syntax checker org-lint: Wrong type argument: number-or-marker-p, #("
 *** DONE [fly/spell/*]check
 *** DONE magit
 *** DONE org
+
 
 * how to use
 
@@ -1645,7 +1646,9 @@ See [[https://github.com/minad/vertico][repo]].
   :ensure (:wait t)
   :demand t
   :config
-  (vertico-mode))
+  (vertico-mode)
+  (define-key vertico-map (kbd "M-p") #'minibuffer-previous-history-element)
+  (define-key vertico-map (kbd "M-n") #'minibuffer-next-history-element))
 #+end_src
 
 **** orderless
